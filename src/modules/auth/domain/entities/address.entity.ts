@@ -1,5 +1,3 @@
-import * as bcrypt from 'bcrypt';
-
 export class Address {
   constructor(
     public readonly idEndereco: number,

@@ -25,8 +25,8 @@ export class UserRepository implements IUserRepository {
           'email',
           'telefone',
           'senha',
-        ])) as unknown as User;
-      const createdUser = row ? UserMapper.toEntity(row) : null;
+        ])) as unknown as User[];
+      const createdUser = row.length ? UserMapper.toEntity(row[0]) : null;
       if (!createdUser) {
         throw new Error('Cliente could not be created');
       }

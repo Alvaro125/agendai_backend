@@ -2,7 +2,6 @@
 import {
   IsEmail,
   IsNotEmpty,
-  IsObject,
   IsString,
   MinLength,
   Validate,
@@ -13,6 +12,8 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsCnpjConstraint } from '../../domain/validators/cnpj.validate';
 import { AddressDto } from './address.dto';
 import { Type } from 'class-transformer';
+import { Business } from '../../domain/entities/business.entity';
+import { Address } from '../../domain/entities/address.entity';
 
 export class RegisterBusinessDto {
   @ApiProperty({
@@ -27,7 +28,7 @@ export class RegisterBusinessDto {
   })
   @IsString()
   @IsNotEmpty()
-  name: string;
+  nome: string;
 
   @ApiProperty({
     example: 'password',
@@ -40,7 +41,7 @@ export class RegisterBusinessDto {
   senha: string;
 
   @ApiProperty({
-    example: '591.561.630-53',
+    example: '29.930.968/0001-07',
   })
   @IsString()
   @IsNotEmpty()
@@ -59,11 +60,40 @@ export class RegisterBusinessDto {
   })
   telefone: string;
 
-  @ApiProperty({ type: AddressDto })
+  @ApiProperty({
+    type: AddressDto,
+    example: {
+      pais: 'BR',
+      estado: 'Mato Grosso do Sul',
+      cidade: 'Dourados',
+      lougradouro: 'Rua B',
+      bairro: 'Centro',
+      numero: '1233',
+      code: '00000-000',
+    },
+  })
   @ValidateNested()
   @Type(() => AddressDto)
   address: AddressDto;
-  static toDomain(dto: RegisterBusinessDto): User {
-    return new User(0, dto.cnpj, dto.name, dto.email, dto.telefone, dto.senha);
+  static toDomain(dto: RegisterBusinessDto): Business {
+    const address = new Address(
+      0,
+      dto.address.pais,
+      dto.address.estado,
+      dto.address.cidade,
+      dto.address.lougradouro,
+      dto.address.bairro,
+      dto.address.numero,
+      dto.address.code,
+    );
+    return new Business(
+      0,
+      dto.cnpj,
+      dto.nome,
+      dto.email,
+      dto.telefone,
+      address,
+      dto.senha,
+    );
   }
 }

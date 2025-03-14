@@ -14,7 +14,7 @@ export class UserMapper {
       row.cpf,
       row.email,
       row.nome,
-      row.email,
+      row.telefone,
       row.senha,
     );
   }

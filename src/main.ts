@@ -3,10 +3,12 @@ import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { apiReference } from '@scalar/nestjs-api-reference';
+import * as cookieParser from 'cookie-parser';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, { cors: true });
   const config = new DocumentBuilder()
+    .addBearerAuth()
     .setTitle('Agendai API')
     .setDescription('The Agendai API description')
     .setVersion('1.0')
@@ -21,7 +23,7 @@ async function bootstrap() {
       },
     }),
   );
-
+  app.use(cookieParser());
   app.useGlobalPipes(new ValidationPipe());
   await app.listen(process.env.PORT ?? 3000);
 }

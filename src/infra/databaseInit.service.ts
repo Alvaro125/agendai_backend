@@ -83,7 +83,7 @@ export class DatabaseInitService implements OnModuleInit {
       await this.knexInstance.schema.createTable('Endereco', (table) => {
         table.integer('idEndereco').primary();
         table.string('pais', 2);
-        table.string('estado', 45).unique;
+        table.string('estado', 45);
         table.string('cidade', 45);
         table.string('lougradouro', 80);
         table.string('bairro', 80);
@@ -118,15 +118,17 @@ export class DatabaseInitService implements OnModuleInit {
       await this.knexInstance.schema.createTable('Servico', (table) => {
         table.integer('idServico').primary();
         table
-          .string('empresa', 45)
-          .references('cnpj')
+          .integer('empresa')
+          .references('idEmpresa')
           .inTable('Empresa')
           .onDelete('CASCADE');
-        table.float('preco');
-        table.string('nome', 45);
+        table.float('preco').notNullable();
+        table.string('nome', 45).notNullable();
+        table.text('descricao').notNullable();
         table.string('duracao', 45);
         table.string('categoria', 45);
-        table.index('empresa', 'empresa_idx');
+        table.text('imagem').defaultTo('');
+        // table.index('empresa', 'empresa_idx');
       });
       this.logger.log('Tabela Servico criada.');
     }

@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
-import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
+import { IsNotEmpty, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class AddressDto {
   @ApiProperty({
     example: 'BR',
   })
-  @IsEmail()
+  @IsString()
   @IsNotEmpty()
   pais: string;
 

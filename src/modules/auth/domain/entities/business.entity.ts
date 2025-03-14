@@ -1,14 +1,15 @@
 import * as bcrypt from 'bcrypt';
+import { Address } from './address.entity';
 
 export class Business {
   constructor(
-    public readonly idCliente: number,
-    public readonly nome: string,
+    public readonly idEmpresa: number,
     public readonly cnpj: string,
-    public readonly telefone: string,
+    public readonly nome: string,
     public readonly email: string,
+    public readonly telefone: string,
+    private _endereco: Address,
     private _senha: string,
-    public readonly endereco: Business,
   ) {}
 
   async setSenha(senha: string, salt: string): Promise<void> {
@@ -29,5 +30,12 @@ export class Business {
 
   get senha(): string {
     return this._senha;
+  }
+
+  setEndereco(addr: Address) {
+    this._endereco = addr;
+  }
+  get endereco(): Address {
+    return this._endereco;
   }
 }
