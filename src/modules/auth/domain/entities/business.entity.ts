@@ -6,6 +6,7 @@ export class Business {
     public readonly idEmpresa: number,
     public readonly cnpj: string,
     public readonly nome: string,
+    public readonly nome_empresa: string,
     public readonly email: string,
     public readonly telefone: string,
     private _endereco: Address,

@@ -22,7 +22,7 @@ export class EvolutionService implements OnModuleInit {
   private connectToEvolution() {
     const openai = new OpenAI({
       baseURL: 'https://generativelanguage.googleapis.com/v1beta/openai/',
-      apiKey: 'AIzaSyBg7tyBhnr1TwdPFNYzzBEWQa6Ye7oBaf8',
+      apiKey: process.env['APIKEY_AI'],
     });
 
     const socket = io('ws://localhost:8080/NOME DA INSTANCIA', {
@@ -38,7 +38,7 @@ export class EvolutionService implements OnModuleInit {
       const regexGroup = /@g\.us/;
       if (
         !regexGroup.test(data.data.key.remoteJid) &&
-        data.data.key.remoteJid == '556796917929@s.whatsapp.net'
+        data.data.key.remoteJid == '556781011923@s.whatsapp.net'
       ) {
         console.log(`Mensagem recebida: ${JSON.stringify(data)}`);
         this.memory.push({
@@ -54,7 +54,7 @@ export class EvolutionService implements OnModuleInit {
             {
               role: 'system',
               content:
-                'Atendimento ao cliente de uma pizzaria sempre que o cliente pedir uma pizza retorne se aasim possivel o valor da pizza, e confirmação de entrega. Se o cliente começar a enrolar ou a xingar responda com resposta cretina e xingamentos maiores',
+                'Atendimento ao cliente de uma pizzaria sempre que o cliente pedir uma pizza retorne se aasim possivel o valor da pizza, e confirmação de entrega. ',
             },
             ...this.memory,
           ],
@@ -73,7 +73,7 @@ export class EvolutionService implements OnModuleInit {
               'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-              number: '556796917929',
+              number: '556781011923',
               text: response.choices[0].message.content,
               delay: 2000,
             }),

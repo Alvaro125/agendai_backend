@@ -7,11 +7,23 @@ export class AttendanceService {
   constructor(private readonly attendanceRepository: AttendanceRepository) {}
   async create(_data: Attendance): Promise<{ message: string }> {
     await this.attendanceRepository.create(_data);
-    return { message: 'User created' };
+    return { message: 'Attendance created' };
   }
 
-  async listAll(busi: number): Promise<> {
-    const atts = await this.attendanceRepository.getByEmpresa(busi);
-    return { message: 'User created' };
+  async listByEmpresa(busi: number): Promise<Attendance[] | null> {
+    const atts = await this.attendanceRepository.findByEmpresa(busi);
+    return atts;
+  }
+
+  async getByID(busi: number, id: number): Promise<Attendance | null> {
+    const att = await this.attendanceRepository.findByIdAndEmpresa(id, busi);
+    return att;
+  }
+  async deleteByID(busi: number, id: number): Promise<{ message: string }> {
+    const att = await this.attendanceRepository.DeleteByIdAndEmpresa(id, busi);
+    if (att) {
+      return { message: `Attendance ${att} removed` };
+    }
+    return { message: `Attendance ${att} already removed or not registered` };
   }
 }

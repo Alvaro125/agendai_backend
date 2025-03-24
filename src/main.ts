@@ -9,6 +9,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule, { cors: true });
   const config = new DocumentBuilder()
     .addBearerAuth()
+    .addCookieAuth('token')
     .setTitle('Agendai API')
     .setDescription('The Agendai API description')
     .setVersion('1.0')

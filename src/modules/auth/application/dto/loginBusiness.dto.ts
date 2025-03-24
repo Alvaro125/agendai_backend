@@ -26,6 +26,7 @@ export class LoginBusinessDto {
       0,
       '',
       '',
+      '',
       dto.email,
       '',
       new Address(0, '', '', '', '', '', '', ''),

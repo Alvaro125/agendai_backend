@@ -6,6 +6,7 @@ export class BusinessMapper {
     idEmpresa: number;
     cnpj: string;
     nome: string;
+    nome_empresa: string;
     email: string;
     telefone: string;
     senha: string;
@@ -22,6 +23,7 @@ export class BusinessMapper {
       row.idEmpresa,
       row.cnpj,
       row.nome,
+      row.nome_empresa,
       row.email,
       row.telefone,
       new Address(
@@ -43,6 +45,7 @@ export class BusinessMapper {
       idEmpresa: entity.idEmpresa,
       cnpj: entity.cnpj,
       nome: entity.nome,
+      nome_empresa: entity.nome_empresa,
       email: entity.email,
       telefone: entity.telefone,
       senha: entity.senha,

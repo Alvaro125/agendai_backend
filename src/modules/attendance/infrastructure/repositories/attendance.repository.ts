@@ -25,7 +25,7 @@ export class AttendanceRepository implements IAttendanceRepository {
           'categoria',
           'imagem',
         ])) as unknown as Attendance;
-      const createdAtt = row ? AttendanceMapper.toEntity(row) : null;
+      const createdAtt = row ? AttendanceMapper.toEntity(row[0]) : null;
       if (!createdAtt) {
         throw new Error('Attendance could not be created');
       }
@@ -40,11 +40,38 @@ export class AttendanceRepository implements IAttendanceRepository {
   }
 
   public async findByEmpresa(busi: number): Promise<Attendance[] | null> {
-    const row = await this.db
+    const rows = (await this.db
       .table('Servico')
       .join('empresa', 'Servico.empresa', '=', 'Empresa.idEmpresa')
-      .where('empresa', busi)
+      .where('empresa', busi)) as any[];
+    return rows ? rows.map((r) => AttendanceMapper.toEntity(r)) : null;
+  }
+
+  async findByIdAndEmpresa(
+    id: number,
+    busi: number,
+  ): Promise<Attendance | null> {
+    const rows = await this.db
+      .table('Servico')
+      .join('empresa', 'Servico.empresa', '=', 'Empresa.idEmpresa')
+      .where({
+        empresa: busi,
+        idServico: id,
+      })
       .first();
-    return row ? BusinessMapper.toEntity(row) : null;
+    console.log(rows);
+    return rows ? AttendanceMapper.toEntity(rows) : null;
+  }
+
+  async DeleteByIdAndEmpresa(id: number, busi: number): Promise<number | null> {
+    const rows = await this.db
+      .table('Servico')
+      .where({
+        empresa: busi,
+        idServico: id,
+      })
+      .del();
+    console.log(rows);
+    return rows ? rows : null;
   }
 }

@@ -1,7 +1,7 @@
 import { Attendance } from '../entities/attendance.entity';
 
 export interface IAttendanceRepository {
-  //   findById(id: string): Promise<User | null>;
+  findByIdAndEmpresa(id: number, busi: number): Promise<Attendance | null>;
   findByEmpresa(busi: number): Promise<Attendance[] | null>;
   create(att: Attendance): Promise<Attendance | null>;
   //   update(user: User): Promise<void>;

@@ -24,11 +24,18 @@ export class RegisterBusinessDto {
   email: string;
 
   @ApiProperty({
-    example: 'Joe John Inc.',
+    example: 'Joe John',
   })
   @IsString()
   @IsNotEmpty()
   nome: string;
+
+  @ApiProperty({
+    example: 'Joe John Inc.',
+  })
+  @IsString()
+  @IsNotEmpty()
+  nome_empresa: string;
 
   @ApiProperty({
     example: 'password',
@@ -90,6 +97,7 @@ export class RegisterBusinessDto {
       0,
       dto.cnpj,
       dto.nome,
+      dto.nome_empresa,
       dto.email,
       dto.telefone,
       address,

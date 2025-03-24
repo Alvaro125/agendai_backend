@@ -10,7 +10,7 @@ export class DatabaseInitService implements OnModuleInit {
   private readonly logger = new Logger(DatabaseInitService.name);
   private knexInstance: knex.Knex;
 
-  constructor(private configService: ConfigService) {}
+  constructor(private configService: ConfigService) { }
 
   async onModuleInit() {
     try {
@@ -38,7 +38,7 @@ export class DatabaseInitService implements OnModuleInit {
 
     // Criar instância do Knex com SQLite
     this.knexInstance = knex({
-      client: 'sqlite3',
+      client: 'better-sqlite3',
       connection: {
         filename: dbPath,
       },
@@ -56,10 +56,11 @@ export class DatabaseInitService implements OnModuleInit {
     if (!(await this.knexInstance.schema.hasTable('Cliente'))) {
       await this.knexInstance.schema.createTable('Cliente', (table) => {
         table.integer('idCliente').primary();
-        table.string('cpf', 45).unique();
-        table.string('email', 45).unique();
+        table.string('cpf', 45).unique().nullable();
+        table.string('email', 80).unique();
         table.string('nome', 45);
         table.string('telefone', 45);
+        table.integer('status').defaultTo(1);
         table.string('senha', 45);
       });
       this.logger.log('Tabela Cliente criada.');
@@ -70,10 +71,13 @@ export class DatabaseInitService implements OnModuleInit {
       await this.knexInstance.schema.createTable('Empresa', (table) => {
         table.integer('idEmpresa').primary();
         table.string('nome', 80).notNullable();
+        table.string('nome_empresa', 80).notNullable();
         table.string('cnpj', 45).unique();
         table.string('telefone', 45).unique();
         table.string('email', 45).unique();
         table.string('senha', 80);
+        table.string('provider', 45);
+        table.text('imagem').defaultTo('');
         table.integer('endereco').references('idEndereco').inTable('Endereco');
       });
       this.logger.log('Tabela Empresa criada.');
@@ -149,8 +153,6 @@ export class DatabaseInitService implements OnModuleInit {
           .onDelete('CASCADE');
         table.date('data');
         table.time('horario');
-        table.index('idCliente', 'cliente_idx');
-        table.index('idServico', 'servico_idx');
       });
       this.logger.log('Tabela Agendamento criada.');
     }
@@ -225,6 +227,22 @@ export class DatabaseInitService implements OnModuleInit {
       this.logger.log('Tabela Avaliacao criada.');
     }
 
+    if (!(await this.knexInstance.schema.hasTable('Links'))) {
+      await this.knexInstance.schema.createTable('Links', (table) => {
+        table.uuid('id').defaultTo(this.knexInstance.fn.uuid()).primary(); // Removi defaultTo(this.knexInstance.fn.uuid()) pois SQLite não suporta UUID nativamente
+        table
+          .integer('empresa')
+          .references('idEmpresa')
+          .inTable('Empresa')
+          .onDelete('CASCADE');
+        table.integer('limite_uso').defaultTo(1);
+        table.integer('uso').defaultTo(0);
+        table.timestamp('data_criacao').defaultTo(this.knexInstance.fn.now()); // Removido (6)
+        table.timestamp('data_expiracao');
+        table.boolean('active').defaultTo(true);
+      });
+      this.logger.log('Tabela Links criada.');
+    }
     this.logger.log(
       'Todas as tabelas foram verificadas e criadas conforme necessário.',
     );

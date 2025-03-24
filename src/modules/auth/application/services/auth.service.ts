@@ -10,6 +10,7 @@ import { AddressRepository } from '../../infrastructure/repositories/address.rep
 import { Address } from '../../domain/entities/address.entity';
 import { BusinessRepository } from '../../infrastructure/repositories/business.repository';
 import { LoginBusinessDto } from '../dto/loginBusiness.dto';
+import { Business } from '../../domain/entities/business.entity';
 
 @Injectable()
 export class AuthService {
@@ -19,7 +20,7 @@ export class AuthService {
     private readonly addressRepository: AddressRepository,
     private readonly configService: ConfigService,
     private readonly jwtService: JwtService,
-  ) {}
+  ) { }
   async register(_data: RegisterDto): Promise<{ message: string }> {
     const newUser = RegisterDto.toDomain(_data);
     await newUser.setSenha(
@@ -53,15 +54,18 @@ export class AuthService {
 
   async registerBusiness(
     _data: RegisterBusinessDto,
+    provider: string = 'local',
   ): Promise<{ message: string }> {
     const newBusi = RegisterBusinessDto.toDomain(_data);
-    await newBusi.setSenha(
-      _data.senha,
-      (this.configService.get<string>('KEY_PASSWORD') as string) || 'secret',
-    );
+    if (provider == 'local') {
+      await newBusi.setSenha(
+        _data.senha,
+        (this.configService.get<string>('KEY_PASSWORD') as string) || 'secret',
+      );
+    }
     const addr: Address = await this.addressRepository.create(newBusi.endereco);
     newBusi.setEndereco(addr);
-    await this.businessRepository.create(newBusi);
+    await this.businessRepository.create(newBusi, provider);
     return { message: 'User created' };
   }
   async loginBusiness(
@@ -86,5 +90,20 @@ export class AuthService {
         access_token: await this.jwtService.signAsync(payload),
       };
     }
+  }
+  async oAuthLogin(user: any): Promise<[{ jwt: string }, Business | null]> {
+    if (!user) {
+      throw new Error('User not found!!!');
+    }
+    const client = await this.businessRepository.findByEmail(user.email);
+    console.log(client);
+    // const payload = {
+    //   email: user.email,
+    //   name: user.name,
+    // };
+
+    const jwt = this.jwtService.sign({ ...user, client: client?.idEmpresa});
+
+    return [{ jwt }, client];
   }
 }
